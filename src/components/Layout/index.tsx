@@ -1,14 +1,17 @@
 import { Box } from "@chakra-ui/layout";
 import { Flex, Button, Center, Spacer, IconButton } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import NextLink from "next/link";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { DropDownMenu } from "./DropDownMenu";
 
 type Props = {
 
 };
 
 const Navbar: React.FC<Props> = ({ children }) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <>
       <Box direction="row">
@@ -31,20 +34,22 @@ const Navbar: React.FC<Props> = ({ children }) => {
             <Flex padding={2}>
               <Button variant="ghost" as="button" aria-label="Home">
                 Login
-            </Button>
+              </Button>
             </Flex>
             <Flex padding={2} mr={1}>
               <Button variant="ghost" as="button" aria-label="Home">
                 Signup
-            </Button>
+              </Button>
             </Flex>
           </Flex>
           <Flex padding={2} alignItems="center" justifyContent="flex-end">
             <IconButton
               aria-label="Drop down menu"
               variant="ghost"
+              onClick={() => setOpen(!open)}
               icon={<ChevronDownIcon />}
             />
+            {open && <DropDownMenu />}
           </Flex>
         </Flex>
       </Box>
