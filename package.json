@@ -1,7 +1,13 @@
 {
   "private": true,
+  "author": {
+    "name": "Kunal Joshi",
+    "email": "mail.kunaljoshi@gmail.com"
+  },
+  "name": "reddit-clone-app",
+  "version": "0.0.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 4000",
     "build": "next build",
     "start": "next start"
   },
