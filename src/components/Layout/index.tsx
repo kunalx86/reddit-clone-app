@@ -4,13 +4,14 @@ import React, { useState } from "react";
 import NextLink from "next/link";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { DropDownMenu } from "./DropDownMenu";
+import { useAuth } from "../../hooks/auth";
+import { LoginButton, LogoutButton, RegisterButton } from "./AuthButtons";
 
-type Props = {
-
-};
+type Props = {};
 
 const Navbar: React.FC<Props> = ({ children }) => {
   const [open, setOpen] = useState(false);
+  const { isLoading, isLoggedIn } = useAuth();
 
   return (
     <>
@@ -30,17 +31,21 @@ const Navbar: React.FC<Props> = ({ children }) => {
             </Flex>
           </Center>
           <Spacer />
-          <Flex display={['none', 'none', 'flex', 'flex']}>
-            <Flex padding={2}>
-              <Button variant="ghost" as="button" aria-label="Home">
-                Login
-              </Button>
-            </Flex>
-            <Flex padding={2} mr={1}>
-              <Button variant="ghost" as="button" aria-label="Home">
-                Signup
-              </Button>
-            </Flex>
+          <Flex display={["none", "none", "flex", "flex"]}>
+            {isLoggedIn ? (
+              <Flex padding={2}>
+                <LogoutButton />
+              </Flex>
+            ) : (
+              <>
+                <Flex padding={2}>
+                  <LoginButton />
+                </Flex>
+                <Flex padding={2} mr={1}>
+                  <RegisterButton />
+                </Flex>
+              </>
+            )}
           </Flex>
           <Flex padding={2} alignItems="center" justifyContent="flex-end">
             <IconButton
@@ -55,7 +60,7 @@ const Navbar: React.FC<Props> = ({ children }) => {
       </Box>
       {children}
     </>
-  )
-}
+  );
+};
 
 export default Navbar;
