@@ -6,6 +6,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { DropDownMenu } from "./DropDownMenu";
 import { useAuth } from "../../hooks/auth";
 import { LoginButton, LogoutButton, RegisterButton } from "./AuthButtons";
+import { SearchBar } from "../Searchbar/SearchBar";
 
 type Props = {};
 
@@ -26,8 +27,7 @@ const Navbar: React.FC<Props> = ({ children }) => {
           </Flex>
           <Center width="100%">
             <Flex direction="row" justifyContent="space-between">
-              {/* TODO: Insert search bar here */}
-              Search
+              <SearchBar />
             </Flex>
           </Center>
           <Spacer />

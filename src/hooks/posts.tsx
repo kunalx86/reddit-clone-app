@@ -1,10 +1,6 @@
 import { useInfiniteQuery } from "react-query";
+import { Post } from "../types";
 import { useAxios } from "./axios";
-
-interface Post {
-  id: number;
-  title: string;
-}
 
 interface Response {
   data: {
