@@ -10,10 +10,10 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { useSearch } from "../../hooks/search";
+import { HistoryItems } from "./HistoryItems";
 import { GroupSearch, PostSearch, UserSearch } from "./SearchItems";
 
 export const SearchBar = () => {
-  const { query, handleUpdate, results, isLoading } = useSearch();
   const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <div>
@@ -30,31 +30,50 @@ export const SearchBar = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <InputGroup>
-            <InputLeftAddon children={<SearchIcon />} />
-            <Input
-              width="100%"
-              type="text"
-              placeholder="Search here..."
-              variant="outline"
-              value={query}
-              onChange={handleUpdate}
-            />
-          </InputGroup>
-          <Flex direction="column" p={3}>
-            {isLoading && "Loading..."}
-            <Flex width="100%" height="100%" p={2}>
-              {!isLoading && <UserSearch users={results.data[0]} />}
-            </Flex>
-            <Flex width="100%" height="100%" p={2}>
-              {!isLoading && <GroupSearch groups={results.data[1]} />}
-            </Flex>
-            <Flex width="100%" height="100%" p={2}>
-              {!isLoading && <PostSearch posts={results.data[2]} />}
-            </Flex>
-          </Flex>
+          <SearchBody />
         </ModalContent>
       </Modal>
     </div>
+  );
+};
+
+const SearchBody = () => {
+  const {
+    query,
+    handleUpdate,
+    results,
+    isLoading,
+    isEmpty,
+    historyQueryItems,
+  } = useSearch();
+  return (
+    <>
+      <InputGroup>
+        <InputLeftAddon children={<SearchIcon />} />
+        <Input
+          width="100%"
+          type="text"
+          placeholder="Search here..."
+          variant="outline"
+          value={query}
+          onChange={handleUpdate}
+        />
+      </InputGroup>
+      <Flex direction="column" p={3}>
+        {isLoading && "Loading..."}
+        <Flex width="100%" height="100%" direction="column" p={2}>
+          <HistoryItems queries={historyQueryItems.reverse()} />
+        </Flex>
+        <Flex width="100%" height="100%" p={2}>
+          {!isLoading && !isEmpty && <UserSearch users={results.data[0]} />}
+        </Flex>
+        <Flex width="100%" height="100%" p={2}>
+          {!isLoading && !isEmpty && <GroupSearch groups={results.data[1]} />}
+        </Flex>
+        <Flex width="100%" height="100%" p={2}>
+          {!isLoading && !isEmpty && <PostSearch posts={results.data[2]} />}
+        </Flex>
+      </Flex>
+    </>
   );
 };

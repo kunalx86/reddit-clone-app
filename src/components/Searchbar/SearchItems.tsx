@@ -1,5 +1,4 @@
 import { Avatar } from "@chakra-ui/avatar";
-import { Image } from "@chakra-ui/image";
 import { Flex } from "@chakra-ui/layout";
 import { Group, Post, User } from "../../types";
 
@@ -8,6 +7,9 @@ interface UserSearchProps {
 }
 
 export const UserSearch: React.FC<UserSearchProps> = ({ users }) => {
+  if (users.length == 0) {
+    return <div>No such users</div>;
+  }
   return (
     <div>
       Users
@@ -41,6 +43,9 @@ interface GroupSearchProps {
 }
 
 export const GroupSearch: React.FC<GroupSearchProps> = ({ groups }) => {
+  if (groups.length == 0) {
+    return <div>No such Groups</div>;
+  }
   return (
     <div>
       Groups
@@ -64,6 +69,9 @@ interface PostSearchProps {
 }
 
 export const PostSearch: React.FC<PostSearchProps> = ({ posts }) => {
+  if (posts.length == 0) {
+    return <div>No such posts</div>;
+  }
   return (
     <div>
       Posts

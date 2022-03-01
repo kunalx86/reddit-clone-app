@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Group, Post, User } from "../types";
 import { useAxios } from "./axios";
 
@@ -8,10 +8,14 @@ interface SearchResult {
 
 export const useSearch = () => {
   const [query, setQuery] = useState("");
+  const [isEmpty, setIsEmpty] = useState(true);
   const [results, setResults] = useState<SearchResult>({
     data: [[], [], []],
   });
+  const [historyQueryItems, setHistoryQueryItems] = useState<string[]>([]);
+  const historyQueryItemsRef = useRef<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const queryRef = useRef<string>();
   const axios = useAxios();
 
   const handleSearch = useCallback(async () => {
@@ -19,7 +23,6 @@ export const useSearch = () => {
     const response = await axios.get<SearchResult>(`/search?query=${query}`, {
       withCredentials: true,
     });
-    console.log(response.data);
     setIsLoading(false);
     return response.data;
   }, [query]);
@@ -30,22 +33,43 @@ export const useSearch = () => {
   );
 
   useEffect(() => {
-    // TODO: Fix setting search item in localstorage after unmount
+    const storageItems = localStorage.getItem("search-queries");
+    if (storageItems) historyQueryItemsRef.current = storageItems.split(",");
+    setHistoryQueryItems(historyQueryItemsRef.current);
     return () => {
-      localStorage.setItem("search-query", query);
+      historyQueryItemsRef.current = historyQueryItemsRef.current.filter(
+        (query) => query != queryRef.current
+      );
+      if (queryRef.current != "")
+        historyQueryItemsRef.current.push(queryRef.current);
+      localStorage.setItem(
+        "search-queries",
+        historyQueryItemsRef.current.reduce((prev, current, idx) => {
+          if (idx === 0) return `${current}`;
+          return `${prev},${current}`;
+        }, "")
+      );
     };
   }, []);
 
   useEffect(() => {
-    if (query != "") handleSearch().then((response) => setResults(response));
-    else
+    if (query != "") {
+      // TODO: Debounce the following
+      handleSearch().then((response) => setResults(response));
+      if (isEmpty) setIsEmpty(false);
+    } else {
       setResults({
         data: [[], [], []],
       });
+      setIsEmpty(true);
+    }
+    queryRef.current = query;
   }, [query]);
 
   return {
     query,
+    historyQueryItems,
+    isEmpty,
     handleUpdate,
     results,
     isLoading,
