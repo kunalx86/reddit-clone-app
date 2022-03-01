@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { useInfiniteQuery } from "react-query";
 import { Post } from "../types";
 import { useAxios } from "./axios";
@@ -15,7 +16,7 @@ type SortBy = "upvoted" | "downvoted" | "latest";
 
 export const usePosts = (sortBy: SortBy = "upvoted") => {
   const axios = useAxios();
-  return useInfiniteQuery(
+  const infiniteQueryRet = useInfiniteQuery(
     "posts",
     async ({ pageParam = 0 }) => {
       const res = await axios.get<Response>(
@@ -28,4 +29,12 @@ export const usePosts = (sortBy: SortBy = "upvoted") => {
         prevPage.data.hasMore ? prevPage.data.next : false,
     }
   );
+
+  useEffect(() => {
+    // TODO: Implement scroll event listener and automatic refetching
+    // TODO: Figure out Event Type for callback function
+    const handleScroll = (event: Event) => {};
+    return () => {};
+  }, []);
+  return infiniteQueryRet;
 };

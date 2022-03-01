@@ -33,10 +33,10 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     setLoading(true);
-    checkStatus().catch((err: AxiosError) => {
+    checkStatus().catch((err: AxiosError<{ error: string }>) => {
       setState((prev) => ({
         ...prev,
-        error: err.message,
+        error: err.response.data.error,
       }));
     });
     setLoading(false);
@@ -52,10 +52,11 @@ export const AuthProvider: React.FC = ({ children }) => {
         checkStatus();
         router.reload();
       })
-      .catch((err) => {
+      .catch((err: AxiosError<{ error: string }>) => {
+        console.log(err);
         setState((prev) => ({
           ...prev,
-          error: err.message,
+          error: err.response.data.error,
         }));
       });
     setLoading(false);

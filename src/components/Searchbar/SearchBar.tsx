@@ -18,7 +18,7 @@ export const SearchBar = () => {
   return (
     <div>
       <InputGroup>
-        <InputLeftAddon children={<SearchIcon />} />
+        {/* <InputLeftAddon children={<SearchIcon />} /> */}
         <Input
           width="100%"
           type="text"
@@ -47,7 +47,7 @@ const SearchBody = () => {
     historyQueryItems,
   } = useSearch();
   return (
-    <>
+    <Flex direction="column" p={2}>
       <InputGroup>
         <InputLeftAddon children={<SearchIcon />} />
         <Input
@@ -74,6 +74,6 @@ const SearchBody = () => {
           {!isLoading && !isEmpty && <PostSearch posts={results.data[2]} />}
         </Flex>
       </Flex>
-    </>
+    </Flex>
   );
 };

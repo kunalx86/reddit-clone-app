@@ -17,12 +17,14 @@
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
     "axios": "^0.25.0",
+    "formik": "^2.2.9",
     "framer-motion": "^4.0.3",
     "lodash.debounce": "^4.0.8",
     "next": "latest",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-query": "^3.34.16"
+    "react-query": "^3.34.16",
+    "yup": "^0.32.11"
   },
   "license": "MIT",
   "devDependencies": {

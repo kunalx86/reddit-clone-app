@@ -1,5 +1,5 @@
-import NextDocument, { Html, Head, Main, NextScript } from 'next/document'
-import { ColorModeScript } from '@chakra-ui/react'
+import NextDocument, { Html, Head, Main, NextScript } from "next/document";
+import { ColorModeScript } from "@chakra-ui/react";
 import theme from "../theme";
 
 export default class Document extends NextDocument {
@@ -9,13 +9,13 @@ export default class Document extends NextDocument {
         <Head>
           <title>Reddit Clone</title>
         </Head>
-        <body>
+        <body className="app">
           {/* Make Color mode to persists when you refresh the page. */}
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <Main />
           <NextScript />
         </body>
       </Html>
-    )
+    );
   }
 }

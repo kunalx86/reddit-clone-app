@@ -4,11 +4,15 @@ import NextLink from "next/link";
 import { Button } from "@chakra-ui/button";
 import { useAuth } from "../../hooks/auth";
 import { LoginButton, LogoutButton, RegisterButton } from "./AuthButtons";
+import { useColorMode } from "@chakra-ui/color-mode";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 type Props = {};
 
 export const DropDownMenu: React.FC<Props> = () => {
   const { isLoggedIn } = useAuth();
+  const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <Flex
       className={styles.dropdown}
@@ -60,6 +64,16 @@ export const DropDownMenu: React.FC<Props> = () => {
           </Container>
         </>
       )}
+      <Container
+        variant="ghost"
+        alignContent="center"
+        justifyContent="center"
+        display="flex"
+      >
+        <Button onClick={toggleColorMode} variant="ghost">
+          {colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
+        </Button>
+      </Container>
     </Flex>
   );
 };
