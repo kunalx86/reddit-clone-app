@@ -39,15 +39,17 @@ export const LoginForm = () => {
     <Flex direction="column" p={3} rounded="3xl">
       <Heading mb={2}>Login</Heading>
       <Divider />
-      <Flex
-        backgroundColor="red.300"
-        borderRadius="md"
-        justifyContent="center"
-        alignContent="center"
-        p={2}
-      >
-        {error}
-      </Flex>
+      {error && (
+        <Flex
+          backgroundColor="red.300"
+          borderRadius="md"
+          justifyContent="center"
+          alignContent="center"
+          p={2}
+        >
+          {error}
+        </Flex>
+      )}
       <Formik
         initialValues={{
           isEmail: 0,
