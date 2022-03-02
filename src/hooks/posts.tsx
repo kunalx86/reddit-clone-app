@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useInfiniteQuery } from "react-query";
 import { Post } from "../types";
 import { useAxios } from "./axios";

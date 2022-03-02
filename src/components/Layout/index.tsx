@@ -12,11 +12,11 @@ type Props = {};
 
 const Navbar: React.FC<Props> = ({ children }) => {
   const [open, setOpen] = useState(false);
-  const { isLoading, isLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   return (
     <>
-      <Box direction="row">
+      <Box borderBottom="1px" borderColor="black" direction="row">
         <Flex alignItems="center" justifyContent="flex-start" direction="row">
           <Flex padding={2}>
             <NextLink href="/">

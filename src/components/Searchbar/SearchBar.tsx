@@ -17,16 +17,15 @@ export const SearchBar = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <div>
-      <InputGroup>
-        {/* <InputLeftAddon children={<SearchIcon />} /> */}
-        <Input
-          width="100%"
-          type="text"
-          placeholder="Search here..."
-          variant="outline"
-          onClick={onOpen}
-        />
-      </InputGroup>
+      <Input
+        width="100%"
+        type="text"
+        placeholder="Search here..."
+        variant="outline"
+        border="1px"
+        borderColor="primaryDark"
+        onClick={onOpen}
+      />
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -49,8 +48,12 @@ const SearchBody = () => {
   return (
     <Flex direction="column" p={2}>
       <InputGroup>
-        <InputLeftAddon children={<SearchIcon />} />
+        <InputLeftAddon
+          borderColor="black"
+          children={<SearchIcon borderColor="black" />}
+        />
         <Input
+          borderColor="black"
           width="100%"
           type="text"
           placeholder="Search here..."

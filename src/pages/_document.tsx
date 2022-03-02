@@ -6,9 +6,7 @@ export default class Document extends NextDocument {
   render() {
     return (
       <Html>
-        <Head>
-          <title>Reddit Clone</title>
-        </Head>
+        <Head></Head>
         <body className="app">
           {/* Make Color mode to persists when you refresh the page. */}
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />

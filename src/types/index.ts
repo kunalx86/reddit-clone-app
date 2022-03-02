@@ -19,10 +19,17 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface GroupProfile {
+  profilePicture: string;
+  bio: string;
+  backgroundProfilePicture: string;
+}  
+
 export interface Group {
   id: number;
   name: string;
-  author: User;
+  owner: User;
+  profile: GroupProfile
 }
 
 export interface Media {

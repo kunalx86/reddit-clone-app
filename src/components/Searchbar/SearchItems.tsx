@@ -1,5 +1,7 @@
 import { Avatar } from "@chakra-ui/avatar";
-import { Flex } from "@chakra-ui/layout";
+import { Image } from "@chakra-ui/image";
+import { Flex, Text } from "@chakra-ui/layout";
+import { darken } from "@chakra-ui/theme-tools";
 import { Group, Post, User } from "../../types";
 
 interface UserSearchProps {
@@ -11,31 +13,36 @@ export const UserSearch: React.FC<UserSearchProps> = ({ users }) => {
     return <div>No such users</div>;
   }
   return (
-    <div>
+    <Flex direction="column" width="inherit">
       Users
-      <Flex
-        direction="column"
-        p={2}
-        border="1px"
-        borderColor="gray.300"
-        borderRadius="2xl"
-        width="56"
-      >
+      <Flex direction="column" width="full" p={2} mr="inherit">
         {users.map((user) => (
           <UserItem key={user.id} user={user} />
         ))}
       </Flex>
-    </div>
+    </Flex>
   );
 };
 
 const UserItem: React.FC<{ user: User }> = ({ user }) => (
-  <div>
-    <Flex direction="row" p={2} alignContent="center">
+  <Flex
+    _hover={{
+      backgroundColor: "gray.100",
+    }}
+    direction="row"
+    border="1px"
+    borderRadius="md"
+    mt={1}
+    p={2}
+  >
+    <Flex direction="row" p={1} alignContent="center" justifyContent="center">
       <Avatar src={user.profile.profilePicture} />
-      {user.username}
+      <Flex direction="column" justifyContent="center" p={2}>
+        {user.username}
+        <Text>{user.profile.bio}</Text>
+      </Flex>
     </Flex>
-  </div>
+  </Flex>
 );
 
 interface GroupSearchProps {
@@ -47,22 +54,37 @@ export const GroupSearch: React.FC<GroupSearchProps> = ({ groups }) => {
     return <div>No such Groups</div>;
   }
   return (
-    <div>
+    <Flex direction="column" width="inherit">
       Groups
-      <Flex
-        direction="column"
-        p={2}
-        border="1px"
-        borderColor="gray.300"
-        borderRadius="2xl"
-      >
+      <Flex direction="column" p={2}>
         {groups.map((group) => (
-          <div key={group.id}>{group.name}</div>
+          <GroupItem key={group.id} group={group} />
         ))}
       </Flex>
-    </div>
+    </Flex>
   );
 };
+
+const GroupItem: React.FC<{ group: Group }> = ({ group }) => (
+  <Flex
+    _hover={{
+      backgroundColor: "gray.100",
+    }}
+    direction="row"
+    border="1px"
+    borderRadius="md"
+    mt={1}
+    p={2}
+  >
+    <Flex direction="row" p={1} alignContent="center" justifyContent="center">
+      <Avatar src={group.profile.profilePicture} />
+      <Flex direction="column" justifyContent="center" p={2}>
+        {group.name}
+        <Text>{group.profile.bio}</Text>
+      </Flex>
+    </Flex>
+  </Flex>
+);
 
 interface PostSearchProps {
   posts: Post[];
@@ -73,19 +95,40 @@ export const PostSearch: React.FC<PostSearchProps> = ({ posts }) => {
     return <div>No such posts</div>;
   }
   return (
-    <div>
+    <Flex direction="column" width="inherit">
       Posts
-      <Flex
-        direction="column"
-        p={2}
-        border="1px"
-        borderColor="gray.300"
-        borderRadius="2xl"
-      >
+      <Flex direction="column" p={2}>
         {posts.map((post) => (
-          <div key={post.id}>{post.title}</div>
+          <PostItem key={post.id} post={post} />
         ))}
       </Flex>
-    </div>
+    </Flex>
   );
 };
+
+const PostItem: React.FC<{ post: Post }> = ({ post }) => (
+  <Flex
+    _hover={{
+      backgroundColor: "gray.100",
+    }}
+    direction="row"
+    border="1px"
+    borderRadius="md"
+    mt={1}
+    p={2}
+  >
+    <Flex direction="row" p={1} alignContent="center" justifyContent="center">
+      <Flex direction="row" justifyContent="center" p={2}>
+        {post.media.type === "IMAGE" ? (
+          <Image height="32px" width="32px" src={post.media.mediaUrl} />
+        ) : null}
+        <Flex direction="column">
+          <Text ml={2}>{post.title}</Text>
+          {post.media.type === "TEXT" ? (
+            <Text>{post.media.mediaText}</Text>
+          ) : null}
+        </Flex>
+      </Flex>
+    </Flex>
+  </Flex>
+);

@@ -10,7 +10,16 @@ export const HistoryItems: React.FC<{ queries: string[] }> = ({ queries }) => (
 );
 
 const HistoryItem: React.FC<{ query: string }> = ({ query }) => (
-  <Flex direction="row">
+  <Flex
+    _hover={{
+      backgroundColor: "gray.100",
+    }}
+    border="1px"
+    m={1}
+    p={2}
+    borderRadius="md"
+    direction="row"
+  >
     {query}
     <Spacer />
     <Search2Icon />
