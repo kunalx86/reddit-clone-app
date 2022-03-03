@@ -36,7 +36,7 @@ const UserItem: React.FC<{ user: User }> = ({ user }) => (
     p={2}
   >
     <Flex direction="row" p={1} alignContent="center" justifyContent="center">
-      <Avatar src={user.profile.profilePicture} />
+      <Avatar src={user.profile.profilePicture} width="24px" height="24px" />
       <Flex direction="column" justifyContent="center" p={2}>
         {user.username}
         <Text>{user.profile.bio}</Text>

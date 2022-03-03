@@ -14,38 +14,37 @@ export const DropDownMenu: React.FC<Props> = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Flex
-      className={styles.dropdown}
-      borderRadius={8}
-      backgroundColor="white"
-      p={2}
-      direction="column"
-    >
+    <>
       {isLoggedIn ? (
-        <>
-          <Container
-            variant="ghost"
-            alignContent="center"
-            justifyContent="center"
-            display={["flex", "flex", "none", "none"]}
-          >
-            <LogoutButton />
-          </Container>
-          <NextLink href="/profile">
+        <Flex width="inherit" direction="column">
+          <Flex p={1} alignItems="center" width="inherit">
             <Container
               variant="ghost"
               alignContent="center"
               justifyContent="center"
-              display="flex"
+              display={["flex", "flex", "none", "none"]}
+              width="inherit"
             >
-              <Button variant="ghost">
-                <Flex p={2}>Profile</Flex>
-              </Button>
+              <LogoutButton />
             </Container>
-          </NextLink>
-        </>
+          </Flex>
+          <Flex p={1} width="inherit">
+            <NextLink href="/profile">
+              <Container
+                variant="ghost"
+                alignContent="center"
+                justifyContent="center"
+                display="flex"
+              >
+                <Button variant="ghost">
+                  <Flex p={2}>Profile</Flex>
+                </Button>
+              </Container>
+            </NextLink>
+          </Flex>
+        </Flex>
       ) : (
-        <>
+        <Flex p={1} direction="column" width="inherit">
           <Container
             variant="ghost"
             alignContent="center"
@@ -62,18 +61,20 @@ export const DropDownMenu: React.FC<Props> = () => {
           >
             <RegisterButton />
           </Container>
-        </>
+        </Flex>
       )}
-      <Container
-        variant="ghost"
-        alignContent="center"
-        justifyContent="center"
-        display="flex"
-      >
-        <Button onClick={toggleColorMode} variant="ghost">
-          {colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
-        </Button>
-      </Container>
-    </Flex>
+      <Flex p={1} width="inherit">
+        <Container
+          variant="ghost"
+          alignContent="center"
+          justifyContent="center"
+          display="flex"
+        >
+          <Button onClick={toggleColorMode} variant="ghost">
+            {colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
+          </Button>
+        </Container>
+      </Flex>
+    </>
   );
 };
