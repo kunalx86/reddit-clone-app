@@ -16,7 +16,18 @@ const Navbar: React.FC<Props> = ({ children }) => {
 
   return (
     <>
-      <Box borderBottom="1px" borderColor="black" direction="row">
+      <Box
+        position="fixed"
+        margin="0"
+        top="0"
+        overflow="hidden"
+        width="100%"
+        background="white"
+        borderBottom="1px"
+        borderColor="black"
+        direction="row"
+        shadow="md"
+      >
         <Flex alignItems="center" justifyContent="flex-start" direction="row">
           <Flex padding={2}>
             <NextLink href="/">
@@ -58,7 +69,7 @@ const Navbar: React.FC<Props> = ({ children }) => {
           </Flex>
         </Flex>
       </Box>
-      {children}
+      <Box mt="50px">{children}</Box>
     </>
   );
 };

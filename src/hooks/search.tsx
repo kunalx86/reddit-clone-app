@@ -43,26 +43,31 @@ export const useSearch = () => {
     setQuery(historyQueryItems[idx]);
   };
 
+  const forceWriteToStorage = useCallback(() => {
+    setHistoryQueryItems((prev) =>
+      prev.includes(query) ? [...prev] : [...prev, query]
+    );
+    historyQueryItemsRef.current = historyQueryItemsRef.current.filter(
+      (query) => query != queryRef.current
+    );
+    if (queryRef.current != "")
+      historyQueryItemsRef.current.push(queryRef.current);
+    historyQueryItemsRef.current.length > 0
+      ? localStorage.setItem(
+          "search-queries",
+          historyQueryItemsRef.current.reduce((prev, current, idx) => {
+            if (idx === 0) return `${current}`;
+            return `${prev},${current}`;
+          }, "")
+        )
+      : localStorage.setItem("search-queries", "");
+  }, [query, historyQueryItemsRef.current]);
+
   useEffect(() => {
     const storageItems = localStorage.getItem("search-queries");
     if (storageItems) historyQueryItemsRef.current = storageItems.split(",");
     setHistoryQueryItems(historyQueryItemsRef.current);
-    return () => {
-      historyQueryItemsRef.current = historyQueryItemsRef.current.filter(
-        (query) => query != queryRef.current
-      );
-      if (queryRef.current != "")
-        historyQueryItemsRef.current.push(queryRef.current);
-      historyQueryItemsRef.current.length > 0
-        ? localStorage.setItem(
-            "search-queries",
-            historyQueryItemsRef.current.reduce((prev, current, idx) => {
-              if (idx === 0) return `${current}`;
-              return `${prev},${current}`;
-            }, "")
-          )
-        : localStorage.setItem("search-queries", "");
-    };
+    return forceWriteToStorage;
   }, []);
 
   useEffect(() => {
@@ -84,6 +89,7 @@ export const useSearch = () => {
     selectQuery,
     historyQueryItems,
     deleteHistoryItem,
+    forceWriteToStorage,
     isEmpty,
     handleUpdate,
     results,

@@ -32,7 +32,7 @@ const PostDetail: React.FC<{ post: Post }> = ({ post }) => {
       p={2}
     >
       {post.title}
-      <Divider />
+      {/* <Divider /> */}
       {post.author.username}
       <PostMedia media={post.media} />
       <Flex justifyContent="center" alignItems="center">
