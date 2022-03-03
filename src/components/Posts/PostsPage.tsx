@@ -1,52 +1,94 @@
 import { ArrowDownIcon, ArrowUpIcon, SpinnerIcon } from "@chakra-ui/icons";
 import { Image } from "@chakra-ui/image";
-import { Divider, Flex, Text } from "@chakra-ui/layout";
+import { Flex, Text } from "@chakra-ui/layout";
+import { Button, Heading } from "@chakra-ui/react";
+import React from "react";
 import { useAuth } from "../../hooks/auth";
-import { usePosts } from "../../hooks/posts";
+import { usePosts, useVotePost } from "../../hooks/posts";
 import { Post, Media } from "../../types";
+import { ShimmerPost } from "../Shimmer/ShimmerPost";
 
 export const PostsPage = () => {
   const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePosts("upvoted");
   if (isFetching) {
-    return <SpinnerIcon />;
+    return (
+      <Flex direction="column" p={4} mt={4} alignItems="center">
+        {Array.from({ length: 2 }).map((_) => (
+          <ShimmerPost />
+        ))}
+      </Flex>
+    );
   }
   return (
-    <Flex direction="column">
-      {data.pages.map((page) =>
-        page.data.posts.map((post) => <PostDetail key={post.id} post={post} />)
+    <>
+      <Flex direction="column">
+        {data.pages.map((page) =>
+          page.data.posts.map((post) => (
+            <PostDetail key={post.id} post={post} />
+          ))
+        )}
+      </Flex>
+      {isFetchingNextPage && (
+        <Flex direction="column" p={4} mt={4} alignItems="center">
+          {Array.from({ length: 2 }).map((_) => (
+            <ShimmerPost />
+          ))}
+        </Flex>
       )}
-    </Flex>
+      <Button
+        onClick={() => fetchNextPage()}
+        isDisabled={!hasNextPage || isFetchingNextPage}
+      >
+        Load More
+      </Button>
+    </>
   );
 };
 
 const PostDetail: React.FC<{ post: Post }> = ({ post }) => {
   const { user } = useAuth();
+  const votePost = useVotePost();
   return (
     <Flex
       direction="column"
-      borderColor="black.300"
+      borderColor="black"
+      border="1px"
       rounded="md"
       mb={1}
       mt={1}
       p={2}
     >
-      {post.title}
-      {/* <Divider /> */}
-      {post.author.username}
+      <Heading>{post.title}</Heading>
+      <hr
+        style={{
+          borderColor: "black",
+        }}
+      />
+      by u/{post.author.username} on{" "}
+      {new Date(Date.parse(post.createdAt)).toDateString()}
       <PostMedia media={post.media} />
       <Flex justifyContent="center" alignItems="center">
-        {post.hasVoted == 1 ? (
-          <ArrowUpIcon fill="ActiveBorder" />
+        {post.voted && post.voted == 1 ? (
+          <ArrowUpIcon
+            color="red"
+            onClick={() => votePost.mutate({ postId: post.id, vote: 1 })}
+          />
         ) : (
-          <ArrowUpIcon />
+          <ArrowUpIcon
+            onClick={() => votePost.mutate({ postId: post.id, vote: 1 })}
+          />
         )}
-        {/* <ArrowUpIcon /> */}
         {post.votesCount}
-        {post.hasVoted == 1 ? (
-          <ArrowDownIcon fill="ActiveBorder" />
+        {post.voted && post.voted == -1 ? (
+          <ArrowDownIcon
+            color="blue"
+            onClick={() => votePost.mutate({ postId: post.id, vote: -1 })}
+          />
         ) : (
-          <ArrowDownIcon />
+          <ArrowDownIcon
+            onClick={() => votePost.mutate({ postId: post.id, vote: -1 })}
+          />
         )}
       </Flex>
     </Flex>

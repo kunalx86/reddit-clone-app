@@ -49,5 +49,7 @@ export interface Post {
   media: Media;
   votesCount: number;
   comments: number;
-  hasVoted?: number;
+  voted?: number;
+  createdAt: string;
+  updatedAt: string;
 }

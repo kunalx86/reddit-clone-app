@@ -64,6 +64,7 @@ export const SearchBar = () => {
       {open && query && (
         <Flex
           className={styles.searchresult}
+          zIndex={9}
           position="fixed"
           mt={10}
           borderRadius="md"
