@@ -1,15 +1,33 @@
-import { Search2Icon } from "@chakra-ui/icons";
+import { CloseIcon } from "@chakra-ui/icons";
 import { Flex, Spacer } from "@chakra-ui/layout";
 
-export const HistoryItems: React.FC<{ queries: string[] }> = ({ queries }) => (
+interface HistoryItemsProps {
+  queries: string[];
+  selectQuery: (idx: number) => void;
+  deleteHistoryQuery: (idx: number) => void;
+}
+
+export const HistoryItems: React.FC<HistoryItemsProps> = (props) => (
   <>
-    {queries.map((query, idx) => (
-      <HistoryItem key={idx} query={query} />
+    {props.queries.map((query, idx) => (
+      <HistoryItem key={query} query={query} idx={idx} {...props} />
     ))}
   </>
 );
 
-const HistoryItem: React.FC<{ query: string }> = ({ query }) => (
+interface HistoryItemProps {
+  query: string;
+  selectQuery: (idx: number) => void;
+  deleteHistoryQuery: (idx: number) => void;
+  idx: number;
+}
+
+const HistoryItem: React.FC<HistoryItemProps> = ({
+  query,
+  selectQuery,
+  deleteHistoryQuery,
+  idx,
+}) => (
   <Flex
     _hover={{
       backgroundColor: "gray.100",
@@ -20,8 +38,10 @@ const HistoryItem: React.FC<{ query: string }> = ({ query }) => (
     borderRadius="md"
     direction="row"
   >
-    {query}
-    <Spacer />
-    <Search2Icon />
+    <Flex mr="auto" onClick={() => selectQuery(idx)}>
+      {query}
+      <Spacer />
+    </Flex>
+    <CloseIcon mt="auto" mb="auto" onClick={() => deleteHistoryQuery(idx)} />
   </Flex>
 );

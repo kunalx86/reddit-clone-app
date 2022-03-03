@@ -44,6 +44,8 @@ const SearchBody = () => {
     isLoading,
     isEmpty,
     historyQueryItems,
+    deleteHistoryItem,
+    selectQuery,
   } = useSearch();
   return (
     <Flex direction="column" p={2}>
@@ -65,7 +67,11 @@ const SearchBody = () => {
       <Flex direction="column" p={3}>
         {isLoading && "Loading..."}
         <Flex width="100%" height="100%" direction="column" p={2}>
-          <HistoryItems queries={historyQueryItems.reverse()} />
+          <HistoryItems
+            deleteHistoryQuery={deleteHistoryItem}
+            selectQuery={selectQuery}
+            queries={historyQueryItems.reverse()}
+          />
         </Flex>
         <Flex width="100%" height="100%" p={2}>
           {!isLoading && !isEmpty && <UserSearch users={results.data[0]} />}

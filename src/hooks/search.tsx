@@ -32,6 +32,17 @@ export const useSearch = () => {
     []
   );
 
+  const deleteHistoryItem = (idx: number) => {
+    setHistoryQueryItems((prev) => prev.filter((item) => item != prev[idx]));
+    historyQueryItemsRef.current = historyQueryItemsRef.current.filter(
+      (item) => item != historyQueryItemsRef.current[idx]
+    );
+  };
+
+  const selectQuery = (idx: number) => {
+    setQuery(historyQueryItems[idx]);
+  };
+
   useEffect(() => {
     const storageItems = localStorage.getItem("search-queries");
     if (storageItems) historyQueryItemsRef.current = storageItems.split(",");
@@ -42,13 +53,15 @@ export const useSearch = () => {
       );
       if (queryRef.current != "")
         historyQueryItemsRef.current.push(queryRef.current);
-      localStorage.setItem(
-        "search-queries",
-        historyQueryItemsRef.current.reduce((prev, current, idx) => {
-          if (idx === 0) return `${current}`;
-          return `${prev},${current}`;
-        }, "")
-      );
+      historyQueryItemsRef.current.length > 0
+        ? localStorage.setItem(
+            "search-queries",
+            historyQueryItemsRef.current.reduce((prev, current, idx) => {
+              if (idx === 0) return `${current}`;
+              return `${prev},${current}`;
+            }, "")
+          )
+        : localStorage.setItem("search-queries", "");
     };
   }, []);
 
@@ -68,7 +81,9 @@ export const useSearch = () => {
 
   return {
     query,
+    selectQuery,
     historyQueryItems,
+    deleteHistoryItem,
     isEmpty,
     handleUpdate,
     results,
