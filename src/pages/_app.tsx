@@ -1,6 +1,5 @@
 import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
 import Head from "next/head";
-import { useState } from "react";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import Layout from "../components/Layout";
@@ -9,8 +8,8 @@ import { AxiosProvider } from "../providers/axiosProvider";
 import theme from "../theme";
 import "./styles.css";
 
+const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }) {
-  const [queryClient] = useState(() => new QueryClient());
   return (
     <>
       <Head>
@@ -24,7 +23,7 @@ function MyApp({ Component, pageProps }) {
         >
           <QueryClientProvider client={queryClient}>
             <ReactQueryDevtools initialIsOpen={false} />
-            <Hydrate state={pageProps}>
+            <Hydrate state={pageProps.dehydratedState}>
               <AxiosProvider>
                 <AuthProvider>
                   <Layout>

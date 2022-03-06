@@ -17,6 +17,7 @@
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
     "axios": "^0.25.0",
+    "cookie": "^0.4.2",
     "formik": "^2.2.9",
     "framer-motion": "^4.0.3",
     "lodash.debounce": "^4.0.8",

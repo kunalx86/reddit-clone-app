@@ -53,3 +53,12 @@ export interface Post {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Comment {
+  id: number;
+  comment: string;
+  user: User;
+  replies: Comment[],
+  parent?: Comment
+  votesCount?: number;
+}

@@ -1,7 +1,8 @@
-import { ArrowDownIcon, ArrowUpIcon, SpinnerIcon } from "@chakra-ui/icons";
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { Image } from "@chakra-ui/image";
 import { Flex, Text } from "@chakra-ui/layout";
 import { Button, Heading } from "@chakra-ui/react";
+import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { useAuth } from "../../hooks/auth";
 import { usePosts, useVotePost } from "../../hooks/posts";
@@ -11,42 +12,51 @@ import { ShimmerPost } from "../Shimmer/ShimmerPost";
 export const PostsPage = () => {
   const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePosts("upvoted");
-  if (isFetching) {
-    return (
-      <Flex direction="column" p={4} mt={4} alignItems="center">
-        {Array.from({ length: 2 }).map((_) => (
-          <ShimmerPost />
-        ))}
-      </Flex>
-    );
-  }
+  const router = useRouter();
+  // Will worry about loading state later
+  // if (isFetching) {
+  //   return (
+  //     <Flex direction="column" p={4} mt={4} alignItems="center">
+  //       {Array.from({ length: 2 }).map((_) => (
+  //         <ShimmerPost />
+  //       ))}
+  //     </Flex>
+  //   );
+  // }
   return (
     <>
       <Flex direction="column">
-        {data.pages.map((page) =>
+        {data?.pages?.map((page) =>
           page.data.posts.map((post) => (
-            <PostDetail key={post.id} post={post} />
+            <PostDetail
+              key={post.id}
+              onClick={() => router.push(`/posts/${post.id}`)}
+              post={post}
+            />
           ))
         )}
+        <Button
+          onClick={() => fetchNextPage()}
+          isDisabled={!hasNextPage || isFetchingNextPage}
+        >
+          Load More
+        </Button>
       </Flex>
       {isFetchingNextPage && (
         <Flex direction="column" p={4} mt={4} alignItems="center">
-          {Array.from({ length: 2 }).map((_) => (
-            <ShimmerPost />
+          {Array.from({ length: 2 }).map((_, idx) => (
+            <ShimmerPost key={idx} />
           ))}
         </Flex>
       )}
-      <Button
-        onClick={() => fetchNextPage()}
-        isDisabled={!hasNextPage || isFetchingNextPage}
-      >
-        Load More
-      </Button>
     </>
   );
 };
 
-const PostDetail: React.FC<{ post: Post }> = ({ post }) => {
+export const PostDetail: React.FC<{ post: Post; onClick: () => void }> = ({
+  post,
+  onClick,
+}) => {
   const { user } = useAuth();
   const votePost = useVotePost();
   return (
@@ -59,45 +69,42 @@ const PostDetail: React.FC<{ post: Post }> = ({ post }) => {
       mt={1}
       p={2}
     >
-      <Heading>{post.title}</Heading>
-      <hr
-        style={{
-          borderColor: "black",
-        }}
-      />
-      by u/{post.author.username} on{" "}
-      {new Date(Date.parse(post.createdAt)).toDateString()}
-      <PostMedia media={post.media} />
+      <Flex direction="column" onClick={onClick}>
+        <Heading>{post.title}</Heading>
+        <hr
+          style={{
+            borderColor: "black",
+          }}
+        />
+        by u/{post?.author?.username} on{" "}
+        {new Date(Date.parse(post.createdAt)).toDateString()}
+        <PostMedia media={post?.media} />
+      </Flex>
       <Flex justifyContent="center" alignItems="center">
-        {post.voted && post.voted == 1 ? (
-          <ArrowUpIcon
-            color="red"
-            onClick={() => votePost.mutate({ postId: post.id, vote: 1 })}
-          />
-        ) : (
-          <ArrowUpIcon
-            onClick={() => votePost.mutate({ postId: post.id, vote: 1 })}
-          />
-        )}
+        <TriangleUpIcon
+          mr={1}
+          aria-label="Upvote"
+          onClick={() => votePost.mutate({ postId: post.id, vote: 1 })}
+          color={post.voted && post.voted == 1 ? "red" : "black"}
+        />
         {post.votesCount}
-        {post.voted && post.voted == -1 ? (
-          <ArrowDownIcon
-            color="blue"
-            onClick={() => votePost.mutate({ postId: post.id, vote: -1 })}
-          />
-        ) : (
-          <ArrowDownIcon
-            onClick={() => votePost.mutate({ postId: post.id, vote: -1 })}
-          />
-        )}
+        <TriangleDownIcon
+          ml={1}
+          border="0px"
+          bgColor="white"
+          aria-label="Downvote"
+          onClick={() => votePost.mutate({ postId: post.id, vote: -1 })}
+          color={post.voted && post.voted == -1 ? "blue" : "black"}
+        />
+        <Text ml={2}>{post.comments} Comments</Text>
       </Flex>
     </Flex>
   );
 };
 
 const PostMedia: React.FC<{ media: Media }> = ({ media }) => {
-  if (media.type === "TEXT") {
-    return <Text>{media.mediaText}</Text>;
+  if (media?.type === "TEXT") {
+    return <Text>{media?.mediaText}</Text>;
   }
-  return <Image src={media.mediaUrl} />;
+  return <Image src={media?.mediaUrl} />;
 };
