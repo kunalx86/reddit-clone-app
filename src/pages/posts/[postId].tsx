@@ -5,29 +5,27 @@ import https from "https";
 import { dehydrate, QueryClient } from "react-query";
 import { getAxios } from "../../providers/axiosProvider";
 import { Post } from "../../types";
-import { PostDetail } from "../../components/Posts/PostsPage";
+import { PostDetail } from "../../components/Posts/PostsList";
 import { useComments } from "../../hooks/comments";
 import { Flex } from "@chakra-ui/layout";
 import { usePost } from "../../hooks/posts";
 import { ShimmerPost } from "../../components/Shimmer/ShimmerPost";
+import { CommentsList } from "../../components/Comments/CommentsList";
 
 const PostPage: React.FC = () => {
   const router = useRouter();
   const { postId } = router.query;
   const { data, status } = usePost(postId as string);
-  const { data: comments } = useComments(postId as string);
+  const { data: comments, isFetching } = useComments(postId as string);
 
   if (status === "loading") {
     return <ShimmerPost />;
   }
 
   return (
-    <Flex direction="column">
-      <PostDetail onClick={() => {}} post={data} />
-      {comments?.length > 0 &&
-        comments?.map((comment) => (
-          <div key={comment.id}>{comment.comment}</div>
-        ))}
+    <Flex direction="column" alignItems="center" justifyItems="center">
+      <PostDetail detail onClick={() => {}} post={data} />
+      {!isFetching && <CommentsList comments={comments} />}
     </Flex>
   );
 };

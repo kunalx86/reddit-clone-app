@@ -53,7 +53,6 @@ export const AuthProvider: React.FC = ({ children }) => {
         router.reload();
       })
       .catch((err: AxiosError<{ error: string }>) => {
-        console.log(err);
         setState((prev) => ({
           ...prev,
           error: err?.response?.data?.error || "Something went wrong",

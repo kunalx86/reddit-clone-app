@@ -1,7 +1,7 @@
 import { SpinnerIcon } from "@chakra-ui/icons";
 import { Flex } from "@chakra-ui/react";
 import React from "react";
-import { PostsPage } from "../components/Posts/PostsPage";
+import { PostsList } from "../components/Posts/PostsList";
 import { useAuth } from "../hooks/auth";
 
 const Index = () => {
@@ -11,7 +11,7 @@ const Index = () => {
   }
   return (
     <Flex justifyContent="center">
-      <PostsPage />
+      <PostsList />
     </Flex>
   );
 };

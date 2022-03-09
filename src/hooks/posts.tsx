@@ -63,14 +63,18 @@ export const usePost = (postId: string) => {
 interface VotePost {
   postId: number;
   vote: 1 | -1;
+  detail?: boolean;
 }
 
+/*
+ * detail is a property to be used to switch optimistic update bodt shape
+ */
 export const useVotePost = () => {
   const queryClient = useQueryClient();
   const axios = useAxios();
   const toast = useToast();
   return useMutation(
-    async ({ postId, vote }: VotePost) => {
+    async ({ postId, vote, detail = false }: VotePost) => {
       const response = await axios.post<{ data: Post }>(
         `/posts/${postId}/vote`,
         {
@@ -106,7 +110,7 @@ export const useVotePost = () => {
             );
           });
       },
-      onMutate: ({ postId, vote }) => {
+      onMutate: ({ postId, vote, detail = false }) => {
         const previousData: InfiniteData<Response> = queryClient.getQueryData([
           "posts",
         ]);
@@ -114,31 +118,29 @@ export const useVotePost = () => {
           "posts",
           postId.toString(),
         ]);
-        previousData === undefined
+        previousData === undefined || detail
           ? queryClient.setQueryData(["posts", postId.toString()], (prev) => ({
-              data: {
-                ...previousPostData,
-                voted:
-                  vote === -1
-                    ? previousPostData.voted === -1
-                      ? 0
-                      : -1
-                    : previousPostData.voted === 1
+              ...previousPostData,
+              voted:
+                vote === -1
+                  ? previousPostData.voted === -1
                     ? 0
-                    : 1,
-                votesCount:
-                  vote === -1
-                    ? previousPostData.voted === -1
-                      ? previousPostData.votesCount + 1
-                      : !previousPostData.voted
-                      ? previousPostData.votesCount - 1
-                      : previousPostData.votesCount - 2
-                    : previousPostData.voted === 1
-                    ? previousPostData.votesCount - 1
-                    : !previousPostData.voted
+                    : -1
+                  : previousPostData.voted === 1
+                  ? 0
+                  : 1,
+              votesCount:
+                vote === -1
+                  ? previousPostData.voted === -1
                     ? previousPostData.votesCount + 1
-                    : previousPostData.votesCount + 2,
-              },
+                    : !previousPostData.voted
+                    ? previousPostData.votesCount - 1
+                    : previousPostData.votesCount - 2
+                  : previousPostData.voted === 1
+                  ? previousPostData.votesCount - 1
+                  : !previousPostData.voted
+                  ? previousPostData.votesCount + 1
+                  : previousPostData.votesCount + 2,
             }))
           : queryClient.setQueryData(
               ["posts"],
@@ -182,7 +184,7 @@ export const useVotePost = () => {
         return previousData;
       },
       onError: (err: AxiosError<{ error: string }>, data, context) => {
-        // queryClient.setQueryData(["posts"], context.toString());
+        queryClient.setQueryData(["posts"], context);
         toast({
           status: "error",
           title: "Error!",
@@ -193,7 +195,7 @@ export const useVotePost = () => {
       },
       onSettled: (data) => {
         // queryClient.invalidateQueries(["posts"]);
-        queryClient.invalidateQueries(["posts", data.data.id.toString()]);
+        // queryClient.invalidateQueries(["posts", data.data.id.toString()]);
       },
     }
   );

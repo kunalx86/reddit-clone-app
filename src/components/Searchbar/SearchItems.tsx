@@ -2,6 +2,7 @@ import { Avatar } from "@chakra-ui/avatar";
 import { Image } from "@chakra-ui/image";
 import { Flex, Text } from "@chakra-ui/layout";
 import { darken } from "@chakra-ui/theme-tools";
+import { useRouter } from "next/dist/client/router";
 import { Group, Post, User } from "../../types";
 
 interface UserSearchProps {
@@ -106,29 +107,33 @@ export const PostSearch: React.FC<PostSearchProps> = ({ posts }) => {
   );
 };
 
-const PostItem: React.FC<{ post: Post }> = ({ post }) => (
-  <Flex
-    _hover={{
-      backgroundColor: "gray.100",
-    }}
-    direction="row"
-    border="1px"
-    borderRadius="md"
-    mt={1}
-    p={2}
-  >
-    <Flex direction="row" p={1} alignContent="center" justifyContent="center">
-      <Flex direction="row" justifyContent="center" p={2}>
-        {post.media.type === "IMAGE" ? (
-          <Image height="32px" width="32px" src={post.media.mediaUrl} />
-        ) : null}
-        <Flex direction="column">
-          <Text ml={2}>{post.title}</Text>
-          {post.media.type === "TEXT" ? (
-            <Text>{post.media.mediaText}</Text>
+const PostItem: React.FC<{ post: Post }> = ({ post }) => {
+  const router = useRouter();
+  return (
+    <Flex
+      _hover={{
+        backgroundColor: "gray.100",
+      }}
+      direction="row"
+      border="1px"
+      borderRadius="md"
+      onClick={() => router.push(`posts/${post.id}`)}
+      mt={1}
+      p={2}
+    >
+      <Flex direction="row" p={1} alignContent="center" justifyContent="center">
+        <Flex direction="row" justifyContent="center" p={2}>
+          {post.media.type === "IMAGE" ? (
+            <Image height="32px" width="32px" src={post.media.mediaUrl} />
           ) : null}
+          <Flex direction="column">
+            <Text ml={2}>{post.title}</Text>
+            {post.media.type === "TEXT" ? (
+              <Text>{post.media.mediaText}</Text>
+            ) : null}
+          </Flex>
         </Flex>
       </Flex>
     </Flex>
-  </Flex>
-);
+  );
+};

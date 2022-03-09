@@ -58,7 +58,13 @@ export interface Comment {
   id: number;
   comment: string;
   user: User;
+  post: {
+    id: number;
+  }
   replies: Comment[],
   parent?: Comment
   votesCount?: number;
+  voted?: number;
+  createdAt: string;
+  updatedAt: string
 }

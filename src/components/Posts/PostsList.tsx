@@ -9,7 +9,7 @@ import { usePosts, useVotePost } from "../../hooks/posts";
 import { Post, Media } from "../../types";
 import { ShimmerPost } from "../Shimmer/ShimmerPost";
 
-export const PostsPage = () => {
+export const PostsList = () => {
   const { data, status, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePosts("upvoted");
   const router = useRouter();
@@ -52,10 +52,11 @@ export const PostsPage = () => {
   );
 };
 
-export const PostDetail: React.FC<{ post: Post; onClick: () => void }> = ({
-  post,
-  onClick,
-}) => {
+export const PostDetail: React.FC<{
+  post: Post;
+  onClick: () => void;
+  detail?: boolean;
+}> = ({ post, onClick, detail = false }) => {
   const votePost = useVotePost();
   const { isLoggedIn } = useAuth();
   const toast = useToast();
@@ -83,11 +84,15 @@ export const PostDetail: React.FC<{ post: Post; onClick: () => void }> = ({
       </Flex>
       <Flex justifyContent="center" alignItems="center">
         <TriangleUpIcon
+          _hover={{
+            border: "1px",
+            borderColor: "red",
+          }}
           mr={1}
           aria-label="Upvote"
           onClick={() =>
             isLoggedIn
-              ? votePost.mutate({ postId: post.id, vote: 1 })
+              ? votePost.mutate({ postId: post.id, vote: 1, detail })
               : toast({
                   status: "error",
                   title: "Error!",
@@ -101,12 +106,16 @@ export const PostDetail: React.FC<{ post: Post; onClick: () => void }> = ({
         {post.votesCount}
         <TriangleDownIcon
           ml={1}
+          _hover={{
+            border: "1px",
+            borderColor: "blue",
+          }}
           border="0px"
           bgColor="white"
           aria-label="Downvote"
           onClick={() =>
             isLoggedIn
-              ? votePost.mutate({ postId: post.id, vote: -1 })
+              ? votePost.mutate({ postId: post.id, vote: -1, detail })
               : toast({
                   status: "error",
                   title: "Error!",
