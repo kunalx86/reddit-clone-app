@@ -2,22 +2,24 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/dist/client/router";
 import cookie from "cookie";
 import https from "https";
-import { dehydrate, QueryClient, useQuery } from "react-query";
+import { dehydrate, QueryClient } from "react-query";
 import { getAxios } from "../../providers/axiosProvider";
 import { Post } from "../../types";
 import { PostDetail } from "../../components/Posts/PostsPage";
-import { SpinnerIcon } from "@chakra-ui/icons";
 import { useComments } from "../../hooks/comments";
 import { Flex } from "@chakra-ui/layout";
 import { usePost } from "../../hooks/posts";
+import { ShimmerPost } from "../../components/Shimmer/ShimmerPost";
 
 const PostPage: React.FC = () => {
   const router = useRouter();
   const { postId } = router.query;
-  const { data, isFetching } = usePost(postId as string);
+  const { data, status } = usePost(postId as string);
   const { data: comments } = useComments(postId as string);
 
-  if (isFetching) return <SpinnerIcon />;
+  if (status === "loading") {
+    return <ShimmerPost />;
+  }
 
   return (
     <Flex direction="column">

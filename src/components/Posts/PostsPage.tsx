@@ -1,7 +1,7 @@
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { Image } from "@chakra-ui/image";
 import { Flex, Text } from "@chakra-ui/layout";
-import { Button, Heading } from "@chakra-ui/react";
+import { Button, Heading, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { useAuth } from "../../hooks/auth";
@@ -10,19 +10,18 @@ import { Post, Media } from "../../types";
 import { ShimmerPost } from "../Shimmer/ShimmerPost";
 
 export const PostsPage = () => {
-  const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, status, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePosts("upvoted");
   const router = useRouter();
-  // Will worry about loading state later
-  // if (isFetching) {
-  //   return (
-  //     <Flex direction="column" p={4} mt={4} alignItems="center">
-  //       {Array.from({ length: 2 }).map((_) => (
-  //         <ShimmerPost />
-  //       ))}
-  //     </Flex>
-  //   );
-  // }
+  if (status === "loading") {
+    return (
+      <Flex direction="column" p={4} mt={4} alignItems="center">
+        {Array.from<number>({ length: 2 }).map((_) => (
+          <ShimmerPost key={_} />
+        ))}
+      </Flex>
+    );
+  }
   return (
     <>
       <Flex direction="column">
@@ -57,8 +56,10 @@ export const PostDetail: React.FC<{ post: Post; onClick: () => void }> = ({
   post,
   onClick,
 }) => {
-  const { user } = useAuth();
   const votePost = useVotePost();
+  const { isLoggedIn } = useAuth();
+  const toast = useToast();
+
   return (
     <Flex
       direction="column"
@@ -84,7 +85,17 @@ export const PostDetail: React.FC<{ post: Post; onClick: () => void }> = ({
         <TriangleUpIcon
           mr={1}
           aria-label="Upvote"
-          onClick={() => votePost.mutate({ postId: post.id, vote: 1 })}
+          onClick={() =>
+            isLoggedIn
+              ? votePost.mutate({ postId: post.id, vote: 1 })
+              : toast({
+                  status: "error",
+                  title: "Error!",
+                  description: "Not authenticated",
+                  isClosable: true,
+                  duration: 5000,
+                })
+          }
           color={post.voted && post.voted == 1 ? "red" : "black"}
         />
         {post.votesCount}
@@ -93,7 +104,17 @@ export const PostDetail: React.FC<{ post: Post; onClick: () => void }> = ({
           border="0px"
           bgColor="white"
           aria-label="Downvote"
-          onClick={() => votePost.mutate({ postId: post.id, vote: -1 })}
+          onClick={() =>
+            isLoggedIn
+              ? votePost.mutate({ postId: post.id, vote: -1 })
+              : toast({
+                  status: "error",
+                  title: "Error!",
+                  description: "Not authenticated",
+                  isClosable: true,
+                  duration: 5000,
+                })
+          }
           color={post.voted && post.voted == -1 ? "blue" : "black"}
         />
         <Text ml={2}>{post.comments} Comments</Text>
@@ -106,5 +127,8 @@ const PostMedia: React.FC<{ media: Media }> = ({ media }) => {
   if (media?.type === "TEXT") {
     return <Text>{media?.mediaText}</Text>;
   }
-  return <Image src={media?.mediaUrl} />;
+  if (media?.type === "IMAGE") {
+    return <Image width="60%" height="60%" shadow="md" src={media?.mediaUrl} />;
+  }
+  return <></>;
 };

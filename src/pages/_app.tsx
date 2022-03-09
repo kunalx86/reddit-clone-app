@@ -1,4 +1,5 @@
 import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
+import { ErrorBoundary } from "react-error-boundary";
 import Head from "next/head";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -15,26 +16,28 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <title>Reddit Clone</title>
       </Head>
-      <ChakraProvider resetCSS theme={theme}>
-        <ColorModeProvider
-          options={{
-            useSystemColorMode: true,
-          }}
-        >
-          <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            <Hydrate state={pageProps.dehydratedState}>
-              <AxiosProvider>
-                <AuthProvider>
-                  <Layout>
-                    <Component {...pageProps} />
-                  </Layout>
-                </AuthProvider>
-              </AxiosProvider>
-            </Hydrate>
-          </QueryClientProvider>
-        </ColorModeProvider>
-      </ChakraProvider>
+      <ErrorBoundary fallback={<div>"Something went wrong"</div>}>
+        <ChakraProvider resetCSS theme={theme}>
+          <ColorModeProvider
+            options={{
+              useSystemColorMode: true,
+            }}
+          >
+            <QueryClientProvider client={queryClient}>
+              <ReactQueryDevtools initialIsOpen={false} />
+              <Hydrate state={pageProps.dehydratedState}>
+                <AxiosProvider>
+                  <AuthProvider>
+                    <Layout>
+                      <Component {...pageProps} />
+                    </Layout>
+                  </AuthProvider>
+                </AxiosProvider>
+              </Hydrate>
+            </QueryClientProvider>
+          </ColorModeProvider>
+        </ChakraProvider>
+      </ErrorBoundary>
     </>
   );
 }

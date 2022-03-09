@@ -71,7 +71,7 @@ export const useVotePost = () => {
   const toast = useToast();
   return useMutation(
     async ({ postId, vote }: VotePost) => {
-      const response = await axios.post<Post>(
+      const response = await axios.post<{ data: Post }>(
         `/posts/${postId}/vote`,
         {
           vote,
@@ -84,63 +84,105 @@ export const useVotePost = () => {
     },
     {
       onSuccess: (data) => {
-        queryClient.setQueryData(["posts"], (prev: InfiniteData<Response>) => ({
-          ...prev,
-          pages: prev.pages.map((page) => ({
-            ...page,
-            data: {
-              ...page.data,
-              posts: page.data.posts.map((post) =>
-                post.id === data.id ? data : post
-              ),
-            },
-          })),
-        }));
+        queryClient
+          .getQueryCache()
+          .findAll(["posts"])
+          .forEach(({ queryKey }) => {
+            queryClient.setQueryData<InfiniteData<Response>>(queryKey, (prev) =>
+              prev
+                ? {
+                    ...prev,
+                    pages: (prev.pages || []).map((page) => ({
+                      ...page,
+                      data: {
+                        ...page.data,
+                        posts: page.data.posts.map((post) =>
+                          post.id === data.data.id ? data.data : post
+                        ),
+                      },
+                    })),
+                  }
+                : { ...prev }
+            );
+          });
       },
       onMutate: ({ postId, vote }) => {
         const previousData: InfiniteData<Response> = queryClient.getQueryData([
           "posts",
         ]);
-        queryClient.setQueryData(["posts"], (prev: InfiniteData<Response>) => ({
-          ...prev,
-          pages: prev.pages.map((page) => ({
-            ...page,
-            data: {
-              ...page.data,
-              posts: page.data.posts.map((post) =>
-                post.id === postId
-                  ? {
-                      ...post,
-                      voted:
-                        vote === -1
-                          ? post.voted === -1
-                            ? 0
-                            : -1
-                          : post.voted === 1
-                          ? 0
-                          : 1,
-                      votesCount:
-                        vote === -1
-                          ? post.voted === -1
-                            ? post.votesCount + 1
-                            : !post.voted
-                            ? post.votesCount - 1
-                            : post.votesCount - 2
-                          : post.voted === 1
-                          ? post.votesCount - 1
-                          : !post.voted
-                          ? post.votesCount + 1
-                          : post.votesCount + 2,
-                    }
-                  : post
-              ),
-            },
-          })),
-        }));
+        const previousPostData: Post = queryClient.getQueryData([
+          "posts",
+          postId.toString(),
+        ]);
+        previousData === undefined
+          ? queryClient.setQueryData(["posts", postId.toString()], (prev) => ({
+              data: {
+                ...previousPostData,
+                voted:
+                  vote === -1
+                    ? previousPostData.voted === -1
+                      ? 0
+                      : -1
+                    : previousPostData.voted === 1
+                    ? 0
+                    : 1,
+                votesCount:
+                  vote === -1
+                    ? previousPostData.voted === -1
+                      ? previousPostData.votesCount + 1
+                      : !previousPostData.voted
+                      ? previousPostData.votesCount - 1
+                      : previousPostData.votesCount - 2
+                    : previousPostData.voted === 1
+                    ? previousPostData.votesCount - 1
+                    : !previousPostData.voted
+                    ? previousPostData.votesCount + 1
+                    : previousPostData.votesCount + 2,
+              },
+            }))
+          : queryClient.setQueryData(
+              ["posts"],
+              (prev: InfiniteData<Response>) => ({
+                ...prev,
+                pages: (prev.pages || []).map((page) => ({
+                  ...page,
+                  data: {
+                    ...page.data,
+                    posts: page.data.posts.map((post) =>
+                      post.id === postId
+                        ? {
+                            ...post,
+                            voted:
+                              vote === -1
+                                ? post.voted === -1
+                                  ? 0
+                                  : -1
+                                : post.voted === 1
+                                ? 0
+                                : 1,
+                            votesCount:
+                              vote === -1
+                                ? post.voted === -1
+                                  ? post.votesCount + 1
+                                  : !post.voted
+                                  ? post.votesCount - 1
+                                  : post.votesCount - 2
+                                : post.voted === 1
+                                ? post.votesCount - 1
+                                : !post.voted
+                                ? post.votesCount + 1
+                                : post.votesCount + 2,
+                          }
+                        : { ...post }
+                    ),
+                  },
+                })),
+              })
+            );
         return previousData;
       },
       onError: (err: AxiosError<{ error: string }>, data, context) => {
-        queryClient.setQueryData(["posts"], context);
+        // queryClient.setQueryData(["posts"], context.toString());
         toast({
           status: "error",
           title: "Error!",
@@ -151,6 +193,7 @@ export const useVotePost = () => {
       },
       onSettled: (data) => {
         // queryClient.invalidateQueries(["posts"]);
+        queryClient.invalidateQueries(["posts", data.data.id.toString()]);
       },
     }
   );

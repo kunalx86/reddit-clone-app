@@ -56,7 +56,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         console.log(err);
         setState((prev) => ({
           ...prev,
-          error: err.response.data.error,
+          error: err?.response?.data?.error || "Something went wrong",
         }));
       });
     setLoading(false);
