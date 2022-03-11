@@ -1,11 +1,15 @@
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { Flex, Heading, Text } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/react";
+import { useState } from "react";
 import { useCommentVote } from "../../hooks/comments";
 import { Comment } from "../../types";
+import { CommentForm } from "./CommentForm";
 
-export const CommentsList: React.FC<{ comments: Comment[] }> = ({
-  comments,
-}) => {
+export const CommentsList: React.FC<{
+  comments: Comment[];
+  postId: string;
+}> = ({ comments, postId }) => {
   return (
     <Flex
       direction="column"
@@ -14,7 +18,6 @@ export const CommentsList: React.FC<{ comments: Comment[] }> = ({
       borderColor="black"
       alignItems="center"
       justifyItems="center"
-      width="inherit"
       p={2}
     >
       <Heading>Comments</Heading>
@@ -23,11 +26,13 @@ export const CommentsList: React.FC<{ comments: Comment[] }> = ({
           borderColor: "black",
         }}
       />
+      <CommentForm postId={postId} />
       <Flex direction="column" width="inherit">
-        {comments.length > 0 &&
-          comments.map((comment) => (
-            <CommentDetail key={comment.id} comment={comment} />
-          ))}
+        {comments.length > 0
+          ? comments.map((comment) => (
+              <CommentDetail key={comment.id} comment={comment} />
+            ))
+          : "No comments yet"}
       </Flex>
     </Flex>
   );
@@ -38,6 +43,7 @@ const CommentDetail: React.FC<{ comment: Comment; ml?: number }> = ({
   ml = 0,
 }) => {
   const voteComment = useCommentVote();
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <Flex
       border="1px"
@@ -53,6 +59,14 @@ const CommentDetail: React.FC<{ comment: Comment; ml?: number }> = ({
       {new Date(Date.parse(comment.createdAt)).toDateString()}
       <Text>{comment.comment}</Text>
       <Flex alignItems="center" justifyContent="center">
+        <Button
+          bgColor="white"
+          border="0px"
+          mr={2}
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          Reply
+        </Button>
         <TriangleUpIcon
           _hover={{
             border: "1px",
@@ -85,6 +99,13 @@ const CommentDetail: React.FC<{ comment: Comment; ml?: number }> = ({
           ml={0.5}
         />
       </Flex>
+      {isOpen && (
+        <CommentForm
+          postId={comment.post.id.toString()}
+          reply
+          parent={comment.id}
+        />
+      )}
       {comment.replies.length > 0 &&
         comment.replies.map((reply) => (
           <CommentDetail key={reply.id} ml={ml + 2} comment={reply} />

@@ -65,6 +65,7 @@ export const PostDetail: React.FC<{
     <Flex
       direction="column"
       borderColor="black"
+      width={detail && "25%"}
       border="1px"
       rounded="md"
       mb={1}

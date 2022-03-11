@@ -11,21 +11,35 @@ import { Flex } from "@chakra-ui/layout";
 import { usePost } from "../../hooks/posts";
 import { ShimmerPost } from "../../components/Shimmer/ShimmerPost";
 import { CommentsList } from "../../components/Comments/CommentsList";
+import { ShimmerComment } from "../../components/Shimmer/ShimmerComment";
 
 const PostPage: React.FC = () => {
   const router = useRouter();
   const { postId } = router.query;
   const { data, status } = usePost(postId as string);
-  const { data: comments, isFetching } = useComments(postId as string);
+  const {
+    data: comments,
+    isFetching,
+    status: commentStatus,
+  } = useComments(postId as string);
 
   if (status === "loading") {
     return <ShimmerPost />;
   }
 
   return (
-    <Flex direction="column" alignItems="center" justifyItems="center">
+    <Flex
+      direction="column"
+      width="inherit"
+      alignItems="center"
+      justifyItems="center"
+    >
       <PostDetail detail onClick={() => {}} post={data} />
-      {!isFetching && <CommentsList comments={comments} />}
+      {commentStatus === "loading" || isFetching ? (
+        <ShimmerComment />
+      ) : (
+        <CommentsList postId={postId as string} comments={comments} />
+      )}
     </Flex>
   );
 };

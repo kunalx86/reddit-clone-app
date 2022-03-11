@@ -122,3 +122,56 @@ export const useCommentVote = () => {
     }
   );
 };
+
+interface CreateComment {
+  postId: string;
+  parent?: number;
+  comment: string;
+}
+
+export const useCreateComment = () => {
+  const axios = useAxios();
+  const queryClient = useQueryClient();
+  const toast = useToast();
+  return useMutation(
+    async ({ postId, parent = null, comment }: CreateComment) => {
+      const response = await axios.post<{ data: Comment }>(
+        `comments/${postId}`,
+        {
+          comment,
+          parent: parent !== null ? parent : undefined,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    },
+    {
+      onSettled: (data) => {
+        queryClient.invalidateQueries([
+          "comments",
+          data.data.post.id.toString(),
+        ]);
+      },
+      onSuccess: (_) => {
+        toast({
+          status: "success",
+          title: "Commented!",
+          description: "Commented successfully 🎉",
+          isClosable: true,
+          duration: 3000,
+        });
+      },
+      onError: (err: AxiosError<{ error: string }>) => {
+        toast({
+          status: "error",
+          title: "Error!",
+          description: err?.response?.data?.error || "Something went wrong",
+          isClosable: true,
+          duration: 3000,
+        });
+      },
+    }
+  );
+};
