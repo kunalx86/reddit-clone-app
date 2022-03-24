@@ -200,3 +200,43 @@ export const useVotePost = () => {
     }
   );
 };
+
+interface PostUpload {
+  title: string;
+  group?: number;
+  media: {
+    type: "TEXT" | "IMAGE" | "GIF";
+    text?: string;
+  };
+}
+
+export const useCreatePost = () => {
+  const axios = useAxios();
+  const toast = useToast();
+  return useMutation(
+    async (postValues: PostUpload) => {
+      const response = await axios.post<{ data: Post }>("posts/", postValues, {
+        withCredentials: true,
+      });
+      return response.data;
+    },
+    {
+      onSuccess: (_) => {
+        toast({
+          status: "success",
+          title: "Post created! 🎉",
+          isClosable: true,
+          description: "Post has been created successfully!",
+        });
+      },
+      onError: (error: AxiosError<{ error: string }>) => {
+        toast({
+          status: "error",
+          title: "Post creation failed!",
+          isClosable: true,
+          description: error.response.data.error || "Something went wrong",
+        });
+      },
+    }
+  );
+};

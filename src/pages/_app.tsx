@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <title>Reddit Clone</title>
       </Head>
-      <ErrorBoundary fallback={<div>"Something went wrong"</div>}>
+      <ErrorBoundary fallback={<div>Something went wrong</div>}>
         <ChakraProvider resetCSS theme={theme}>
           <ColorModeProvider
             options={{

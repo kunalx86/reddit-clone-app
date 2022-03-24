@@ -31,7 +31,7 @@ const Navbar: React.FC<Props> = ({ children }) => {
   return (
     <>
       <Box
-        position="fixed"
+        position="sticky"
         margin="0"
         top="0"
         overflow="hidden"
