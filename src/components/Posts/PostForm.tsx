@@ -4,10 +4,12 @@ import { Image } from "@chakra-ui/image";
 import { Input } from "@chakra-ui/input";
 import { Flex } from "@chakra-ui/layout";
 import { Radio, RadioGroup } from "@chakra-ui/radio";
+import { Spinner } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/textarea";
 import { Field, Form, Formik, FormikProvider } from "formik";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
+import { useAxios } from "../../hooks/axios";
 import { useCreatePost } from "../../hooks/posts";
 
 const initialValues: {
@@ -36,22 +38,40 @@ const initialValues: {
  */
 export const PostForm = () => {
   const { mutateAsync } = useCreatePost();
+  const axios = useAxios();
   const router = useRouter();
   return (
     <Flex mb={2} border="1px" borderColor="black" borderRadius="md" p={2}>
       <Formik
         initialValues={initialValues}
-        onSubmit={async ({ title, type, text, post: file }, actions) => {
+        onSubmit={async ({ title, type, text, post }, actions) => {
           actions.setSubmitting(true);
-          const { data: post } = await mutateAsync({
+          const { data } = await mutateAsync({
             title,
             media: {
               type,
+              text: type === "TEXT" ? text : undefined,
             },
           });
+
+          // Post IMAGE to /:postId/image for final touch
+          if (type === "IMAGE") {
+            const formData = new FormData();
+            formData.append("post", post);
+            const response = await axios.post(
+              `/posts/${data.id}/image`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+                withCredentials: true,
+              }
+            );
+            data.media.mediaUrl = response.data.data.media.mediaUrl;
+          }
           actions.setSubmitting(false);
-          // TODO: Figure out why post is undefined, implement picture upload
-          // router.push(`posts/${post.id}`);
+          router.push(`posts/${data.id}`);
         }}
       >
         {({ isSubmitting, values: { type, post }, setFieldValue }) => (
@@ -128,7 +148,6 @@ export const PostForm = () => {
                           name="post"
                           type="file"
                         />
-                        {console.log(post)}
                       </FormControl>
                       {post && <ImagePreview file={post} />}
                     </>
@@ -136,7 +155,7 @@ export const PostForm = () => {
                 </Field>
               )}
               <Button mt={2} disabled={isSubmitting} type="submit">
-                Post!
+                {isSubmitting && <Spinner />}Post!
               </Button>
             </Flex>
           </Form>

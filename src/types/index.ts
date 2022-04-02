@@ -37,6 +37,7 @@ export interface Media {
   createdAt: string,
   updatedAt: string,
   type: "TEXT" | "IMAGE",
+  post?: File,
   mediaUrl: string,
   mediaText: string,
 }

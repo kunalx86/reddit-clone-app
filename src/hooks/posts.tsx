@@ -207,6 +207,7 @@ interface PostUpload {
   media: {
     type: "TEXT" | "IMAGE" | "GIF";
     text?: string;
+    post?: File;
   };
 }
 

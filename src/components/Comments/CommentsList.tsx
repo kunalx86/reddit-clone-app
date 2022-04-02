@@ -27,7 +27,7 @@ export const CommentsList: React.FC<{
         }}
       />
       <CommentForm postId={postId} />
-      <Flex direction="column" width="inherit">
+      <Flex direction="column" width="inherit" maxWidth={400}>
         {comments.length > 0
           ? comments.map((comment) => (
               <CommentDetail key={comment.id} comment={comment} />

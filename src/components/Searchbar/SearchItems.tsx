@@ -117,7 +117,7 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
       direction="row"
       border="1px"
       borderRadius="md"
-      onClick={() => router.push(`posts/${post.id}`)}
+      onClick={() => router.push(`/posts/${post.id}`)}
       mt={1}
       p={2}
     >

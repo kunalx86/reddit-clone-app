@@ -51,6 +51,12 @@ const theme = extendTheme({
       baseStyle: (props) => ({
         borderColor: mode("black.900", "white.900")(props),
         border: "1px",
+        position: "inherit",
+      }),
+    },
+    TextArea: {
+      baseStyle: (props) => ({
+        position: "inherit",
       }),
     },
   },
