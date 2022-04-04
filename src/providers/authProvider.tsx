@@ -36,7 +36,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     checkStatus().catch((err: AxiosError<{ error: string }>) => {
       setState((prev) => ({
         ...prev,
-        error: err.response.data.error,
+        error: err?.response?.data?.error || "Something went wrong",
       }));
     });
     setLoading(false);
@@ -78,7 +78,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       .catch((err) => {
         setState((prev) => ({
           ...prev,
-          error: err.message,
+          error: err?.message || "Something went wrong",
         }));
       });
     setLoading(false);

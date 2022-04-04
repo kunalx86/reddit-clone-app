@@ -57,7 +57,6 @@ export const SearchBar = () => {
           border="1px"
           borderColor="primaryDark"
           onClick={() => setOpen(true)}
-          value={query}
           onChange={handleUpdate}
         />
       </InputGroup>

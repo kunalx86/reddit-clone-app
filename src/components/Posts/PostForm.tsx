@@ -4,7 +4,7 @@ import { Image } from "@chakra-ui/image";
 import { Input } from "@chakra-ui/input";
 import { Flex } from "@chakra-ui/layout";
 import { Radio, RadioGroup } from "@chakra-ui/radio";
-import { Spinner } from "@chakra-ui/react";
+import { Spinner, useToast } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/textarea";
 import { Field, Form, Formik, FormikProvider } from "formik";
 import { useRouter } from "next/dist/client/router";
@@ -40,6 +40,7 @@ export const PostForm = () => {
   const { mutateAsync } = useCreatePost();
   const axios = useAxios();
   const router = useRouter();
+  const toast = useToast();
   return (
     <Flex mb={2} border="1px" borderColor="black" borderRadius="md" p={2}>
       <Formik
@@ -71,6 +72,12 @@ export const PostForm = () => {
             data.media.mediaUrl = response.data.data.media.mediaUrl;
           }
           actions.setSubmitting(false);
+          toast({
+            status: "success",
+            title: "Post created! 🎉",
+            isClosable: true,
+            description: "Post has been created successfully!",
+          });
           router.push(`posts/${data.id}`);
         }}
       >

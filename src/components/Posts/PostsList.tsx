@@ -135,10 +135,21 @@ export const PostDetail: React.FC<{
 
 const PostMedia: React.FC<{ media: Media }> = ({ media }) => {
   if (media?.type === "TEXT") {
-    return <Text>{media?.mediaText}</Text>;
+    return (
+      <Text>
+        {media?.mediaText.split(/\n/).map((line) => (
+          <>
+            {line}
+            <br />
+          </>
+        ))}
+      </Text>
+    );
   }
   if (media?.type === "IMAGE") {
-    return <Image width="60%" height="60%" shadow="md" src={media?.mediaUrl} />;
+    return (
+      <Image width="500px" height="100%" shadow="md" src={media?.mediaUrl} />
+    );
   }
   return <></>;
 };

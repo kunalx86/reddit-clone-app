@@ -1,4 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { useQuery } from "react-query";
+import { useDebounce } from "rooks";
 import { Group, Post, User } from "../types";
 import { useAxios } from "./axios";
 
@@ -7,25 +9,30 @@ interface SearchResult {
 }
 
 export const useSearch = () => {
-  const [query, setQuery] = useState("");
+  const [query, _setQuery] = useState("");
+  const setQuery = useDebounce(_setQuery, 500);
   const [isEmpty, setIsEmpty] = useState(true);
-  const [results, setResults] = useState<SearchResult>({
-    data: [[], [], []],
-  });
   const [historyQueryItems, setHistoryQueryItems] = useState<string[]>([]);
   const historyQueryItemsRef = useRef<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const queryRef = useRef<string>();
   const axios = useAxios();
 
-  const handleSearch = useCallback(async () => {
-    setIsLoading(true);
-    const response = await axios.get<SearchResult>(`/search?query=${query}`, {
-      withCredentials: true,
-    });
-    setIsLoading(false);
-    return response.data;
-  }, [query]);
+  const {
+    data: results,
+    isLoading,
+    refetch,
+  } = useQuery(
+    "search",
+    async () => {
+      const response = await axios.get<SearchResult>(`/search?query=${query}`, {
+        withCredentials: true,
+      });
+      return response.data;
+    },
+    {
+      enabled: !!query,
+    }
+  );
 
   const handleUpdate = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
@@ -72,13 +79,9 @@ export const useSearch = () => {
 
   useEffect(() => {
     if (query != "") {
-      // TODO: Debounce the following
-      handleSearch().then((response) => setResults(response));
+      refetch();
       if (isEmpty) setIsEmpty(false);
     } else {
-      setResults({
-        data: [[], [], []],
-      });
       setIsEmpty(true);
     }
     queryRef.current = query;

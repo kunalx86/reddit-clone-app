@@ -57,7 +57,14 @@ const CommentDetail: React.FC<{ comment: Comment; ml?: number }> = ({
     >
       by {comment.user.username} on{" "}
       {new Date(Date.parse(comment.createdAt)).toDateString()}
-      <Text>{comment.comment}</Text>
+      <Text>
+        {comment.comment.split(/\n/).map((line) => (
+          <>
+            {line}
+            <br />
+          </>
+        ))}
+      </Text>
       <Flex alignItems="center" justifyContent="center">
         <Button
           bgColor="white"

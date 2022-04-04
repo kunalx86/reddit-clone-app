@@ -222,14 +222,7 @@ export const useCreatePost = () => {
       return response.data;
     },
     {
-      onSuccess: (_) => {
-        toast({
-          status: "success",
-          title: "Post created! 🎉",
-          isClosable: true,
-          description: "Post has been created successfully!",
-        });
-      },
+      onSuccess: (_) => {},
       onError: (error: AxiosError<{ error: string }>) => {
         toast({
           status: "error",

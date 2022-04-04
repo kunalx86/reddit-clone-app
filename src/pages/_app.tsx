@@ -8,6 +8,7 @@ import { AuthProvider } from "../providers/authProvider";
 import { AxiosProvider } from "../providers/axiosProvider";
 import theme from "../theme";
 import "./styles.css";
+import { Loader } from "../components/Layout/Loader";
 
 const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }) {
@@ -29,7 +30,9 @@ function MyApp({ Component, pageProps }) {
                 <AxiosProvider>
                   <AuthProvider>
                     <Layout>
-                      <Component {...pageProps} />
+                      <Loader>
+                        <Component {...pageProps} />
+                      </Loader>
                     </Layout>
                   </AuthProvider>
                 </AxiosProvider>
