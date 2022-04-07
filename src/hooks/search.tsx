@@ -62,17 +62,18 @@ export const useSearch = () => {
     historyQueryItemsRef.current.length > 0
       ? localStorage.setItem(
           "search-queries",
-          historyQueryItemsRef.current.reduce((prev, current, idx) => {
-            if (idx === 0) return `${current}`;
-            return `${prev},${current}`;
-          }, "")
+          JSON.stringify({ list: historyQueryItemsRef.current })
         )
       : localStorage.setItem("search-queries", "");
   }, [query, historyQueryItemsRef.current]);
 
   useEffect(() => {
     const storageItems = localStorage.getItem("search-queries");
-    if (storageItems) historyQueryItemsRef.current = storageItems.split(",");
+    console.log(storageItems);
+    if (storageItems)
+      historyQueryItemsRef.current = (
+        JSON.parse(storageItems.trim()) as { list: string[] }
+      ).list;
     setHistoryQueryItems(historyQueryItemsRef.current);
     return forceWriteToStorage;
   }, []);
