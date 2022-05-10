@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/authContext";
-import { LoginCredentials, User } from "../types";
+import { LoginCredentials, RegisterCredentials, User } from "../types";
 import { useAxios } from "../hooks/axios";
 import { AxiosError } from "axios";
 import { useRouter } from "next/dist/client/router";
@@ -42,7 +42,26 @@ export const AuthProvider: React.FC = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = useCallback((creds: LoginCredentials) => {
+  const register = useCallback(async (creds: RegisterCredentials) => {
+    setLoading(true);
+    axios
+      .post("/auth/register", creds, {
+        withCredentials: true,
+      })
+      .then((_) => {
+        checkStatus();
+        router.reload();
+      })
+      .catch((err: AxiosError<{ error: string }>) => {
+        setState((prev) => ({
+          ...prev,
+          error: err?.response?.data?.error || "Something went wrong",
+        }));
+      });
+    setLoading(false);
+  }, []);
+
+  const login = useCallback(async (creds: LoginCredentials) => {
     setLoading(true);
     axios
       .post("/auth/login", creds, {
@@ -93,6 +112,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         isLoggedIn,
         login,
         logout,
+        register,
       }}
     >
       {children}

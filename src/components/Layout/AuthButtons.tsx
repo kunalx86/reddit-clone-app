@@ -4,6 +4,7 @@ import { Modal, ModalContent, ModalOverlay } from "@chakra-ui/modal";
 import React from "react";
 import { useAuth } from "../../hooks/auth";
 import { LoginForm } from "../Auth/Login";
+import { RegisterForm } from "../Auth/Register";
 
 export const LoginButton: React.FC = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -23,10 +24,24 @@ export const LoginButton: React.FC = (props) => {
 };
 
 export const RegisterButton: React.FC = (props) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Button variant="ghost" as="button" aria-label="Register">
-      Register
-    </Button>
+    <>
+      <Button
+        variant="ghost"
+        onClick={onOpen}
+        as="button"
+        aria-label="Register"
+      >
+        Register
+      </Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <RegisterForm />
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

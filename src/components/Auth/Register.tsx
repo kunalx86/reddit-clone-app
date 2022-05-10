@@ -5,23 +5,20 @@ import { Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import { useAuth } from "../../hooks/auth";
 
-const loginSchema = yup.object().shape({
-  usernameOrEmail: yup.string().when("isEmail", {
-    is: 1,
-    then: yup
-      .string()
-      .email("Please enter a valid email")
-      .required("Username or Email is a necessary field"),
-    otherwise: yup
-      .string()
-      .min(3, "Username should be 3 characters at least")
-      .max(15, "Username should not exceed 15 characters")
-      .matches(
-        /^[a-zA-Z0-9]([_]|[a-zA-Z0-9]){2,15}[a-zA-Z0-9]$/,
-        "Username must begin with alphanumberic character, can have _ and must end with alphanumeric character"
-      )
-      .required("Username or Email is a necessary field"),
-  }),
+const registerSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Not a valid email")
+    .required("Email is a necessary field"),
+  username: yup
+    .string()
+    .min(3, "Username should be 3 characters at least")
+    .max(15, "Username should not exceed 15 characters")
+    .matches(
+      /^[a-zA-Z0-9]([_]|[a-zA-Z0-9]){2,15}[a-zA-Z0-9]$/,
+      "Username must begin with alphanumberic character, can have _ and must end with alphanumeric character"
+    )
+    .required("Username is a necessary field"),
   password: yup
     .string()
     .min(8, "Password should be 8 characters at least")
@@ -33,11 +30,11 @@ const loginSchema = yup.object().shape({
     .required("Password is a necessary field"),
 });
 
-export const LoginForm = () => {
-  const { login, error } = useAuth();
+export const RegisterForm = () => {
+  const { register, error } = useAuth();
   return (
     <Flex direction="column" p={3} rounded="3xl">
-      <Heading mb={2}>Login</Heading>
+      <Heading mb={2}>Register</Heading>
       <Divider />
       {error && (
         <Flex
@@ -52,55 +49,56 @@ export const LoginForm = () => {
       )}
       <Formik
         initialValues={{
-          isEmail: 0,
-          usernameOrEmail: "",
+          username: "",
+          email: "",
           password: "",
         }}
-        validationSchema={loginSchema}
-        onSubmit={({ usernameOrEmail, password }, actions) => {
-          login({
-            usernameOrEmail,
+        validationSchema={registerSchema}
+        onSubmit={async ({ username, password, email }, actions) => {
+          await register({
+            username,
+            email,
             password,
           });
           actions.setSubmitting(false);
         }}
       >
-        {({ isSubmitting, isValid, handleChange, values }) => (
+        {({ isSubmitting, isValid }) => (
           <>
-            <Input
-              height={0}
-              width={0}
-              readOnly={true}
-              visibility="hidden"
-              value={values.isEmail}
-            />
             <Form>
-              <Field name="usernameOrEmail">
+              <Field name="email">
                 {({ field, form }) => (
                   <FormControl
                     pt={-2}
                     p={2}
-                    isInvalid={
-                      form.errors.usernameOrEmail &&
-                      form.touched.usernameOrEmail
-                    }
+                    isInvalid={form.errors.email && form.touched.email}
                   >
-                    <FormLabel htmlFor="text">Username or Email</FormLabel>
+                    <FormLabel htmlFor="text">Email</FormLabel>
                     <Input
                       {...field}
-                      placeholder="Enter username or email"
+                      placeholder="Enter your email"
                       type="text"
-                      id="usernameOrEmail"
-                      onChange={(e) => {
-                        handleChange("usernameOrEmail")(e);
-                        if (e.target.value.includes("@"))
-                          handleChange("isEmail")("1");
-                        else handleChange("isEmail")("0");
-                      }}
+                      id="email"
                     />
-                    <FormErrorMessage>
-                      {form.errors.usernameOrEmail}
-                    </FormErrorMessage>
+                    <FormErrorMessage>{form.errors.email}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+              <Field name="username">
+                {({ field, form }) => (
+                  <FormControl
+                    pt={-2}
+                    p={2}
+                    isInvalid={form.errors.username && form.touched.username}
+                  >
+                    <FormLabel htmlFor="text">Username</FormLabel>
+                    <Input
+                      {...field}
+                      placeholder="Enter username"
+                      type="text"
+                      id="username"
+                    />
+                    <FormErrorMessage>{form.errors.username}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
@@ -123,7 +121,7 @@ export const LoginForm = () => {
               </Field>
               <Flex justify="center" direction="row" p={2}>
                 <Button type="submit" disabled={isSubmitting || !isValid}>
-                  {isSubmitting && <Spinner />}Login
+                  {isSubmitting && <Spinner />}Register
                 </Button>
               </Flex>
             </Form>
